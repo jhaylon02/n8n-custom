@@ -2,21 +2,20 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Install Debian system dependencies
-RUN apt-get update && apt-get install -y \
+# Install Alpine system dependencies
+RUN apk add --no-cache \
     python3 \
-    python3-pip \
+    py3-pip \
     ffmpeg \
     curl \
     wget \
     git \
-    ca-certificates \
     chromium \
     nss \
     freetype \
     harfbuzz \
     ttf-freefont \
-    && rm -rf /var/lib/apt/lists/*
+    ca-certificates
 
 # Install Python packages
 RUN pip3 install --no-cache-dir \
@@ -25,7 +24,7 @@ RUN pip3 install --no-cache-dir \
     pandas \
     lxml
 
-# Install Playwright (CLI only, light version)
+# Install Playwright CLI only
 RUN npm install -g playwright
 
 # Switch back to n8n user
