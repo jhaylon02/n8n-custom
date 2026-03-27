@@ -2,22 +2,28 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Install Debian system dependencies (n8n base image is Debian-based)
-RUN apt-get update && apt-get install -y \
+# n8n v2.1.0+ removed apk for security hardening — reinstall it first
+RUN wget -q https://gitlab.alpinelinux.org/api/v4/projects/5/packages/generic/v2.14.4/x86_64/apk.static \
+    && chmod +x apk.static \
+    && ./apk.static -X https://dl-cdn.alpinelinux.org/alpine/v3.23/main \
+                    -X https://dl-cdn.alpinelinux.org/alpine/v3.23/community \
+                    -U --allow-untrusted --initdb add apk-tools \
+    && rm apk.static
+
+# Now install required packages using restored apk
+RUN apk add --no-cache \
     python3 \
-    python3-pip \
+    py3-pip \
     ffmpeg \
     curl \
     wget \
     git \
     ca-certificates \
     chromium \
-    libnss3 \
-    libfreetype6 \
-    libharfbuzz0b \
-    fonts-freefont-ttf \
-    --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
+    nss \
+    freetype \
+    harfbuzz \
+    ttf-freefont
 
 # Install Python packages
 RUN pip3 install --no-cache-dir --break-system-packages \
