@@ -2,7 +2,7 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Install Alpine system dependencies
+# Install Alpine system dependencies (n8n base image is Alpine-based)
 RUN apk add --no-cache \
     python3 \
     py3-pip \
@@ -10,15 +10,15 @@ RUN apk add --no-cache \
     curl \
     wget \
     git \
+    ca-certificates \
     chromium \
     nss \
     freetype \
     harfbuzz \
-    ttf-freefont \
-    ca-certificates
+    ttf-freefont
 
 # Install Python packages
-RUN pip3 install --no-cache-dir \
+RUN pip3 install --no-cache-dir --break-system-packages \
     requests \
     beautifulsoup4 \
     pandas \
@@ -29,7 +29,3 @@ RUN npm install -g playwright
 
 # Switch back to n8n user
 USER node
-
-# Enable Task Runners
-ENV N8N_RUNNERS_ENABLED=true
-ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
