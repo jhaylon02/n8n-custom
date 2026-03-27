@@ -2,20 +2,16 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Install system dependencies (Alpine uses apk, NOT apt-get)
-RUN apk add --no-cache \
+# Install system dependencies (Debian-based)
+RUN apt-get update && apt-get install -y \
   python3 \
-  py3-pip \
+  python3-pip \
   ffmpeg \
   curl \
   wget \
   git \
   ca-certificates \
-  chromium \
-  nss \
-  freetype \
-  harfbuzz \
-  ttf-freefont
+  && rm -rf /var/lib/apt/lists/*
 
 # Install Python packages
 RUN pip3 install --no-cache-dir \
@@ -24,11 +20,9 @@ RUN pip3 install --no-cache-dir \
   pandas \
   lxml
 
-# Install Playwright + browsers
-RUN npm install -g playwright && \
-  playwright install --with-deps
+# Install Playwright (light version only)
+RUN npm install -g playwright
 
 USER node
 
 ENV N8N_RUNNERS_ENABLED=true
-ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
